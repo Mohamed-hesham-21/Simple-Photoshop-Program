@@ -27,6 +27,9 @@ void shuffle(vector<int> &order);
 void shrink(int sz);
 void mirror(int m);
 void crop(int x, int y, int l, int w);
+void skewh(double d);
+void skewv(double d);
+
 
 int main()
 {
@@ -335,5 +338,101 @@ void crop(int x, int y, int l, int w)
             if (i <= irange1 && i >= irange2 && j<= jrange1 && j>= jrange2) continue;
             else image[i][j] = 255;
         }
+    }
+}
+
+
+void skewh(int degree)
+{
+    unsigned char tmp[SIZE][SIZE];
+    memset(tmp, 255, sizeof tmp);
+    int c{}, mul{}, total{}, ctr{1};
+    double leftout, sz;
+    bool neg{};
+    if (!degree) return;
+    if (degree < 0) degree *= -1, neg = 1;
+    leftout = tan(degree * M_PI / 180.0) * 256;
+    sz = (256.0 / leftout);
+    set<ll> st;
+    for (double j{sz}; j < SIZE; j += sz)
+    {
+        st.insert(static_cast<ll>(j));
+    }
+    for (int i{}; i < SIZE; i++)
+    {
+        for (int j{}; j < SIZE; j++)
+        {
+            if (st.count(j)) 
+            {
+                total += image[i][j];
+                ctr++;
+                continue;
+            }
+            total += image[i][j];
+            tmp[i][c] = total / ctr;
+            c++, total = 0, ctr = 1;
+        }
+        c = 0;
+    }
+    memset(image, 255, sizeof image);
+    for (int i{(neg ? 0 : SIZE - 1)}; i >= 0 && i < SIZE;)
+    {
+        for (int j{}; j + mul < SIZE; j++)
+        {
+            image[i][j + mul] = tmp[i][j];
+        }
+        if ((i / sz > mul && neg) || ((SIZE - i) / sz > mul && !neg))
+        {
+            mul++;
+        }
+        i += (neg ? 1 : -1);
+    }
+
+}
+
+void skewv(int degree)
+{
+    unsigned char tmp[SIZE][SIZE];
+    memset(tmp, 255, sizeof tmp);
+    int r{}, mul{}, total{}, ctr{1};
+    double leftout, sz;
+    bool neg{};
+    if (!degree) return;
+    if (degree < 0) degree *= -1, neg = 1;
+    leftout = tan(degree * M_PI / 180.0) * 256;
+    sz = (256.0 / leftout);
+    set<ll> st;
+    for (double j{sz}; j < SIZE; j += sz)
+    {
+        st.insert(static_cast<ll>(j));
+    }
+    for (int j{}; j < SIZE; j++)
+    {
+        for (int i{}; i < SIZE; i++)
+        {
+            if (st.count(i)) 
+            {
+                total += image[i][j];
+                ctr++;
+                continue;
+            }
+            total += image[i][j];
+            tmp[r][j] = total / ctr;
+            r++, total = 0, ctr = 1;
+        }
+        r = 0;
+    }
+    memset(image, 255, sizeof image);
+    for (int j{(neg ? 0 : SIZE - 1)}; j >= 0 && j < SIZE;)
+    {
+        for (int i{}; i + mul < SIZE; i++)
+        {
+            image[i + mul][j] = tmp[i][j];
+        }
+        if ((j / sz > mul && neg) || ((SIZE - j) / sz > mul && !neg))
+        {
+            mul++;
+        }
+        j += (neg ? 1 : -1);
     }
 }
