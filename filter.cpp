@@ -329,8 +329,6 @@ void loadImage(unsigned char img[SIZE][SIZE][RGB])
 
 void saveImage(bool autoSaveFile)
 {
-    // This function saves an image into a bmp image file
-
     if (autoSaveFile) writeRGBBMP(autoSaveFileName, image);
     else
     {
@@ -347,8 +345,6 @@ void saveImage(bool autoSaveFile)
 
 void saveMod()
 {
-    // this function saves the last modification done on the image
-
     vector<vector<vector<unsigned char>>> mod;
     vector<vector<unsigned char>> row(SIZE, vector<unsigned char>(RGB));
     for (int i{}; i < SIZE; i++)
@@ -368,8 +364,6 @@ void saveMod()
 
 void undo()
 {
-        // This function un does the last modifaction done on an image
-
     if (mods.size() > 1) mods.pop_back();
     for (int i{}; i < SIZE; i++)
     {
@@ -435,7 +429,6 @@ void invert()
 
 void flipHorizontally()
 {
-    // This functions flips the picture horizontally by swapping element (i,j) with (i,255-1-j)
 
     for (int i{}; i < SIZE; i++)
     {
@@ -451,9 +444,6 @@ void flipHorizontally()
 
 void flipVertically()
 {
-    // This functions flips the picture Vertically by swapping element (i,j) with (255-1-i,j) 
-
-    
     for (int i{}; i < SIZE / 2; i++)
     {
         for (int j{}; j < SIZE; j++)
@@ -468,8 +458,6 @@ void flipVertically()
 
 void rotate()
 {
-    // This function rotates an image by 90 degrees by using this formula: i = 256 - 1 - j, j = i
-
     unsigned char tmp[SIZE][SIZE][RGB];
     for (int i{}; i < SIZE; i++)
     {
@@ -489,7 +477,6 @@ void rotate()
 
 void merge()
 {
-    // Merge function merges any two pictures together by taking the average of the values of the pixels
 
     for (int i{}; i < SIZE; i++)
     {
@@ -505,7 +492,6 @@ void merge()
 
 void darken(double p)
 {   
-    // Darken function used to increase the darkness of any picture by 50% through dividing the pixel values by 2
 
     for (int i{}; i < SIZE; i++)
     {
@@ -521,7 +507,6 @@ void darken(double p)
 
 void lighten(double p)
 {   
-    // lighten function used to increase the lightness of any picture by 50% through doubling the pixel values
 
     for (int i{}; i < SIZE; i++)
     {
@@ -539,12 +524,6 @@ void lighten(double p)
 
 void detectEdges()
 {   
-    // This function detects the edges 
-    // it goes to every pixel checking if it has any pixel surrounding it with 255 value
-    // if there is a pixel surrounding it with 255 value ,the value of the pixel does not change
-    // else the pixel turns white
-
-    
     blackAndWhite();
     unsigned char tmp[SIZE][SIZE][RGB];
     for (int i{}; i < SIZE; i++)
@@ -580,9 +559,6 @@ void detectEdges()
 
 void enlarge(int q)
 {
-    // This function enlarges a specific quarter of an image by assigning the value of each pixel of that quarter
-    // to 4 adjacent pixels in the new image
-    // put each quarter in the place we want
 
     int h = SIZE / 2, x{}, y{};
     unsigned char tmp[SIZE][SIZE][RGB];
@@ -607,8 +583,6 @@ void enlarge(int q)
 
 void blur()
 {
-    // This function blurs an image by assigning each pixel the value of the average of itself and all of its adjacent pixels
-
     unsigned char tmp[SIZE][SIZE][RGB];
     for (int i{}; i < SIZE; i++)
     {
@@ -637,10 +611,8 @@ void blur()
     }
 }
 
-void shuffle(vector<int>&order){
-    // This function shuffles the 4 quarters of an image by seperating each quarter into a designated array
-    // and assigning each pixel in each quarter into its designated position
-
+void shuffle(vector<int>&order)
+{
 for (int k = 0; k <3 ; ++k) {
     unsigned char q[5][128][128];
     for (int i = 0; i < SIZE; ++i) {
@@ -674,8 +646,6 @@ for (int k = 0; k <3 ; ++k) {
 
 void shrink(int sz)
 {
-    // This function shrinks an image by a ratio in the format of (1 / x) where x is a positive integer
-
     for (int k = 0; k < 3; ++k) {
         unsigned char tmp[SIZE][SIZE];
         memset(tmp, 255, sizeof tmp);
@@ -701,8 +671,6 @@ void shrink(int sz)
 
 void mirror(int m)
 {
-    // this function mirros a spicic half of an image by iterating through each pixel in that half and mirring it on the other side
-
     for (int i = (m == 4 ? 128 : 0); i < (m == 3 ? 128 : SIZE); i++)
     {
         for (int j = (m == 2 ? 128 : 0); j < (m == 1 ? 128 : SIZE); j++)
@@ -718,10 +686,6 @@ void mirror(int m)
 
 void crop(int x, int y, int l, int w)
 {
-    // This function crops the image by getting the point (x,y) and length and width
-    // it does this by making a range between x and x+l and y and y+w in which for all i and j x<=i<=x+l &&
-    // y<=j<=y+w the pixels remains with its value,else it will be set to 255
-
 
     l++, w++;
     int irange1 = x + l, irange2 = x;
@@ -745,33 +709,20 @@ void crop(int x, int y, int l, int w)
 
 void skewh(double degree)
 {   
-    //FCAI - OOP Programming - 2023 - Assignment 1
-    //Last Modification Date : October 6th 2023
-    //Ahmed Yosry Saad       ID:20221014
-    //Sherif Yousef Mahmoud  ID:20221081
-    //Mohamed Hesham Mohamed ID:20221133
-    //Purpose: Revising C++ syntax
+
     unsigned char tmp[SIZE][SIZE][RGB];
     memset(tmp, 255, sizeof tmp);
-    //declares a 2d array having 255 in all elements
-    //this function skews the image by a given degree from the user between 0-45;
     int leftout, sz, c{};
     bool neg{};
-    // if degree = 0 print the same picture
     if (!degree) return;
     if (degree < 0) degree *= -1, neg = 1;
     leftout = tan(degree * (22 / 7) / 180.0) * 256;
-    //take the degree and calculate the radiant to get the value of the tan
     sz = round(256.0 / (leftout));
-    //since the empty angles forms a right-angled triangle, we get the value of the tan which = Opposite/adjacent
-    //after that we calculate the length of each side of the triangle to decide which pixels will be set to 255
     for (int i{}; i < SIZE; i++)
     {
         for (int j{}; j < SIZE; j++)
         {
             if (j && j % sz == 0) continue;
-            //according to the degree we compress the pixels
-            // we must skip a pixel every N pixels according to the degree and this is made by the if-condition
             assign(tmp[i][c], image[i][j]);
             c++;
         }
@@ -779,8 +730,7 @@ void skewh(double degree)
     }
 
     int tobepushed{};
-    //this variable is used in pushing the pixels for a certain direction to get the skew result after compressing
-    memset(image, 255, sizeof image);//setting the whole image to white
+    memset(image, 255, sizeof image);
     for (int i = (neg ? 0 : SIZE - 1); ((neg && i < SIZE) || (!neg && i >= 0));)
     {
         for (int j{}; j + tobepushed < SIZE; j++)
@@ -795,32 +745,19 @@ void skewh(double degree)
 
 void skewv(double degree)
 {
-    //FCAI - OOP Programming - 2023 - Assignment 1
-    //Last Modification Date : October 6th 2023
-    //Ahmed Yosry Saad       ID:20221014
-    //Sherif Yousef Mahmoud  ID:20221081
-    //Mohamed Hesham Mohamed ID:20221133
-    //Purpose: Revising C++ syntax
     unsigned char tmp[SIZE][SIZE][RGB];
     memset(tmp, 255, sizeof tmp);
-    //declares a 2d array having 255 in all elements
-    //this function skews the image by a given degree from the user between 0-45;
     int leftout, size, r{};
     bool neg{};
-    if (!degree ) return;//if degree = 0 print the same picture
+    if (!degree ) return;
     if (degree < 0) degree *= -1, neg = 1;
     leftout = tan( degree * (22 / 7 ) / 180.0 ) * 256;
-    //take the degree and calculate the radiant to get the value of the tan
     size = round( 256.0 / ( leftout ) );
-    //since the empty angles forms a right-angled triangle, we get the value of the tan which = Opposite/adjacent
-    //after that we calculate the length of each side of the triangle to decide which pixels will be set to 255
     for (int j{}; j < SIZE; j++)
     {
     for (int i{}; i < SIZE; i++)
     {
         if (i && i % size == 0) continue;
-        //according to the degree we compress the pixels
-        // we must skip a pixel every N pixels according to the degree and this is made by the if-condition
         assign(tmp[r][j], image[i][j]);
         r++;
     }
@@ -828,7 +765,6 @@ void skewv(double degree)
     }
 
     int tobepushed{};
-    //this variable is used in pushing the pixels in a certain direction to get the skew result after compressing
     memset(image, 255, sizeof image);
     for (int j = (neg ? 0 : SIZE - 1); (neg && j < SIZE) || (!neg && j >= 0);)
     {
